@@ -1,12 +1,12 @@
 <html>
     <head>
-        <head>
             <meta name="viewport" content="initial-scale=1, maximum-scale=1"/>
-            <title>도서검색</title>
+            <title>지역검색</title>
             <link rel="stylesheet" href="https://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.css" />
             <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
             <script src="https://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.1/handlebars.js"></script>
+            <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=cbdba0278ca1f3d82996610ebd3222a0"></script>
             <link rel="stylesheet" href="style01.css">
             <style>
                 #list{
@@ -16,83 +16,88 @@
                 #list li{
                     padding-left: 10px;
                 }
-                #title, #authors{
-                    text-align: center;
-                }
-                #title{
-                    padding-top: 10px;
-                    font-size: 1.5rem;
-                }
-                #authors{
-                    font-size: 1.2rem;
-                }
-                #image{
-                    padding-top: 20px;
-                    padding-bottom: 0px;
-                    margin: auto;
-                }
-                #contents{
-                    font-size: 1.1rem;
-                }
-                p{
-                    line-height: 30px;
-                    text-align: left;
-                }
                 div[data-role="header"]{
                     padding: 8px;
                 }
                 div[data-role="footer"]{
                     padding: 8px;
                 }
+                #address, #phone{
+                    font-weight: bold;
+                    font-size: 1.2rem;
+                }
                 li:hover{
                     background: rgb(214, 231, 243);
                 }
             </style>
-        </head>
     </head>
+
     <body>
-        <!-- 도서목록 페이지 -->
+        <!-- 지역목록 페이지 -->
         <div data-role="page" id="main">
             <div data-role="header" data-theme="b" data-position="fixed"> <!--헤더고정-->
                 <a href="index.html" target="_self" data-icon="home" data-iconpos="notext">Home</a>
-                <h2>도서검색</h2>
+                <h2>지역검색</h2>
             </div>
             <div data-role="content" data-theme="d">
-                <input type="text" id="txtQuery" value="jquery"/>
+                <input type="text" id="txtQuery" value="남이섬"/>
                 <ul data-role="listview" id="list"></ul>
                     <script id="temp" type="text/x-handlebars-template">
                         {{#each documents}}
                             <li>
-                                <a href="#sub" title="{{title}}" contents="{{contents}}" price="{{price}}" authors="{{authors}}" style="padding: 40px 10px 5px 100px;"><img src="{{thumbnail}}" style="margin: 10px; border: 1px solid #c0c0c0;"/>{{{title}}}</a>
+                                <a href="#sub" address="{{address_name}}" data-rel="dialog" 
+                                phone="{{phone}}" x="{{x}}" y="{{y}}" style="padding: 20px 0px 20px 10px;">{{{place_name}}}</a>
                             </li>
                         {{/each}}
                     </script>
-                <input type="button" value="더보기" id="btnMore"/>
-            </div>
+                    <input type="button" value="더보기" id="btnMore"/>
+                </div>
             <div data-role="footer" data-theme="b" data-position="fixed">
                 <h2>인천일보아카데미 이미래</h2>
             </div>
         </div>
 
-        <!-- 도서정보 페이지 -->
+        <!-- 지역정보 페이지 -->
         <div data-role="page" id="sub">
             <div data-role="header" data-theme="b" data-position="fixed"> <!--헤더고정-->
-                <a href="#main" target="_self" data-icon="back" data-iconpos="notext">Back</a>
-                <h2>도서정보</h2>
+                <h2>지역정보</h2>
             </div>
-            <div data-role="content" style="text-align: center;">
-                <img src="" id="image" width="300" height="400">
-                <div><h3 id="title"></h3></div>
-                <div><h4 id="authors"></h4></div>
-                <div><p id="contents"></p></div>
+            <div data-role="content">
+                <div style="text-align: center;">
+                    <div id="address"></div>
+                    <div id="phone"></div>
+                    <div id="map" style="width:470px; height:300px; border: 1px solid gray; margin: auto;"></div>
+                </div>
             </div>
             <div data-role="footer" data-theme="b" data-position="fixed">
                 <h2>인천일보아카데미 이미래</h2>
             </div>
         </div>
     </body>
+
     <script>
-        var url="https://dapi.kakao.com/v3/search/book?target=title";
+        var url="https://dapi.kakao.com/v2/local/search/keyword.json";
+        
+        $("#list").on("click", "a", function(){
+            var address=$(this).attr("address");
+            var phone=$(this).attr("phone");
+
+            $("#address").html(address);
+            $("#phone").html(phone);
+
+            var x=$(this).attr("x");
+            var y=$(this).attr("y");         
+
+            var container = document.getElementById('map');
+		    var options = {
+                center: new kakao.maps.LatLng(y, x),
+			    level: 2
+		    };
+
+		    var map = new kakao.maps.Map(container, options);
+            setTimeout(function(){ map.relayout(); }, 1000);
+        });
+        
     </script>
     <script src="script.js"></script>
 </html>

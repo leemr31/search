@@ -2,13 +2,17 @@
     <head>
         <head>
             <meta name="viewport" content="initial-scale=1, maximum-scale=1"/>
-            <title>도서검색</title>
+            <title>동영상검색</title>
             <link rel="stylesheet" href="https://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.css" />
             <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
             <script src="https://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.1/handlebars.js"></script>
             <link rel="stylesheet" href="style01.css">
             <style>
+                #list img{
+                    width: 50px;
+                    height: 70px;
+                }
                 #list{
                     margin-top: 20px;
                     margin-bottom: 20px;
@@ -44,26 +48,24 @@
                 div[data-role="footer"]{
                     padding: 8px;
                 }
-                li:hover{
-                    background: rgb(214, 231, 243);
-                }
+                
             </style>
         </head>
     </head>
     <body>
-        <!-- 도서목록 페이지 -->
+        <!-- 동영상목록 페이지 -->
         <div data-role="page" id="main">
             <div data-role="header" data-theme="b" data-position="fixed"> <!--헤더고정-->
                 <a href="index.html" target="_self" data-icon="home" data-iconpos="notext">Home</a>
-                <h2>도서검색</h2>
+                <h2>동영상검색</h2>
             </div>
-            <div data-role="content" data-theme="d">
-                <input type="text" id="txtQuery" value="jquery"/>
+            <div data-role="content">
+                <input type="text" id="txtQuery" value="테슬라"/>
                 <ul data-role="listview" id="list"></ul>
                     <script id="temp" type="text/x-handlebars-template">
                         {{#each documents}}
                             <li>
-                                <a href="#sub" title="{{title}}" contents="{{contents}}" price="{{price}}" authors="{{authors}}" style="padding: 40px 10px 5px 100px;"><img src="{{thumbnail}}" style="margin: 10px; border: 1px solid #c0c0c0;"/>{{{title}}}</a>
+                                <a href="{{url}}"><img src="{{thumbnail}}"/>{{{title}}}<br><br>{{url}}</a>
                             </li>
                         {{/each}}
                     </script>
@@ -74,17 +76,14 @@
             </div>
         </div>
 
-        <!-- 도서정보 페이지 -->
+        <!-- 동영상정보 페이지 -->
         <div data-role="page" id="sub">
             <div data-role="header" data-theme="b" data-position="fixed"> <!--헤더고정-->
                 <a href="#main" target="_self" data-icon="back" data-iconpos="notext">Back</a>
-                <h2>도서정보</h2>
+                <h2>동영상정보</h2>
             </div>
             <div data-role="content" style="text-align: center;">
-                <img src="" id="image" width="300" height="400">
-                <div><h3 id="title"></h3></div>
-                <div><h4 id="authors"></h4></div>
-                <div><p id="contents"></p></div>
+                <h1 id="title"></h1>
             </div>
             <div data-role="footer" data-theme="b" data-position="fixed">
                 <h2>인천일보아카데미 이미래</h2>
@@ -92,7 +91,7 @@
         </div>
     </body>
     <script>
-        var url="https://dapi.kakao.com/v3/search/book?target=title";
+        var url="https://dapi.kakao.com/v2/search/vclip";
     </script>
     <script src="script.js"></script>
 </html>
