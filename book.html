@@ -1,0 +1,140 @@
+<html>
+    <head>
+        <head>
+            <meta name="viewport" content="initial-scale=1, maximum-scale=1"/>
+            <title>도서검색</title>
+            <link rel="stylesheet" href="https://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.css" />
+            <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+            <script src="https://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.1/handlebars.js"></script>
+            <style>
+                @font-face {
+                        font-family: Noto Sans KR;
+                        src: url('NotoSansKR-Regular');
+                    }
+                *{
+                    font-family: Noto Sans KR;
+                }
+                #list img{
+                    width: 50px;
+                    height: 70px;
+                }
+                #list{
+                    margin-top: 20px;
+                    margin-bottom: 20px;
+                }
+                #list li{
+                    padding-left: 10px;
+                }
+                #title, #authors{
+                    text-align: center;
+                }
+                #title{
+                    padding-top: 10px;
+                    font-size: 1.5rem;
+                }
+                #authors{
+                    font-size: 1.2rem;
+                }
+                #image{
+                    padding-top: 20px;
+                    padding-bottom: 0px;
+                    margin: auto;
+                }
+                #contents{
+                    font-size: 1.1rem;
+                }
+                p{
+                    line-height: 30px;
+                    text-align: left;
+                }
+                div[data-role="header"]{
+                    padding: 8px;
+                }
+                div[data-role="footer"]{
+                    padding: 8px;
+                }
+                
+            </style>
+        </head>
+    </head>
+    <body>
+        <!-- 도서목록 페이지 -->
+        <div data-role="page" id="main">
+            <div data-role="header" data-theme="b" data-position="fixed"> <!--헤더고정-->
+                <a href="index.html" target="_self" data-icon="home" data-iconpos="notext">Home</a>
+                <h2>도서검색</h2>
+            </div>
+            <div data-role="content">
+                <input type="text" id="txtQuery" value="jquery"/>
+                <ul data-role="listview" id="list"></ul>
+                    <script id="temp" type="text/x-handlebars-template">
+                        {{#each documents}}
+                            <li>
+                                <a href="#sub" title="{{title}}" contents="{{contents}}" price="{{price}}" authors="{{authors}}"><img src="{{thumbnail}}"/>{{{title}}}</a>
+                            </li>
+                        {{/each}}
+                    </script>
+                <input type="button" value="더보기" id="btnMore"/>
+            </div>
+            <div data-role="footer" data-theme="b" data-position="fixed">
+                <h2>인천일보아카데미 이미래</h2>
+            </div>
+        </div>
+
+        <!-- 도서정보 페이지 -->
+        <div data-role="page" id="sub">
+            <div data-role="header" data-theme="b" data-position="fixed"> <!--헤더고정-->
+                <a href="#main" target="_self" data-icon="back" data-iconpos="notext">Back</a>
+                <h2>도서정보</h2>
+            </div>
+            <div data-role="content" style="text-align: center;">
+                <img src="" id="image" width="300" height="400">
+                <div><h3 id="title"></h3></div>
+                <div><h4 id="authors"></h4></div>
+                <div><p id="contents"></p></div>
+            </div>
+            <div data-role="footer" data-theme="b" data-position="fixed">
+                <h2>인천일보아카데미 이미래</h2>
+            </div>
+        </div>
+    </body>
+    <script>
+        var size=10;
+        getList();
+        $("#list").on("click","a",function(){
+            var title=$(this).attr("title"); //this: list안에 있는 a
+            var authors=$(this).attr("authors");
+            var contents=$(this).attr("contents")
+            var price=$(this).attr("price");
+            var image=$(this).find("img").attr("src");
+            // alert(title+"\n"+authors+"\n"+contents+"\n"+price+"\n"+image);
+            $("#image").attr("src", image);
+            $("#title").html(title);
+            $("#authors").html(authors+" ["+price+"원"+"]");
+            $("#contents").html(contents);
+        });
+        $("#btnMore").on("click",function(){
+            size+=5;
+            getList();
+        });
+        $("#txtQuery").on("keydown",function(){
+            size=10;
+            getList();
+        });
+        function getList(){
+            var query=$("#txtQuery").val();
+            $.ajax({
+                type: "get",
+                url: "https://dapi.kakao.com/v3/search/book?target=title",
+                dataType: "json",
+                data: {"query":query, "size":size},
+                headers: {"Authorization": "KakaoAK 04bb5327c41f3eb2d17d15b10ffeaea4"},
+                success: function(data){
+                    var temp=Handlebars.compile($("#temp").html());
+                    $("#list").html(temp(data)).listview("refresh");
+                }
+            });
+        }
+    </script>
+</html>
